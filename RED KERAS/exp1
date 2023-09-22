@@ -9,3 +9,39 @@ from tensorflow.keras.optimizers import RMSprop, SGD,Adam,Nadam
 learning_rate = 0.001
 epochs = 20
 batch_size = 120
+from tensorflow.keras.datasets import mnist
+(X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+X_train.shape
+x_trainv = X_train.reshape(60000, 784)
+x_testv = X_test.reshape(10000, 784)
+x_trainv = x_trainv.astype('float32')
+x_testv = x_testv.astype('float32')
+
+x_trainv /= 255  # x_trainv = x_trainv/255
+x_testv /= 255
+print(Y_train[10000])
+num_classes=10
+y_trainc = keras.utils.to_categorical(Y_train, num_classes)
+y_testc = keras.utils.to_categorical(Y_test, num_classes)
+
+plt.figure()
+plt.imshow(X_train[5])#número de imagen en el mnist
+plt.colorbar()
+plt.grid(False)
+plt.show()
+
+model = Sequential()
+model.add(Dense(512, activation='softmax', input_shape=(784,)))
+model.add(Dense(num_classes, activation='softmax'))
+
+model.summary()
+
+model.compile(loss='categorical_crossentropy',optimizer=Nadam(learning_rate=learning_rate),metrics=['accuracy'])
+
+history = model.fit(x_trainv, y_trainc,
+                    batch_size=batch_size,
+                    epochs=epochs,
+                    verbose=1,
+                    validation_data=(x_testv, y_testc)
+                    )
+
